@@ -31,7 +31,7 @@ car_fuel <- c("Does not apply", "Diesel", "Petrol", "Hybrid", "LPG",
 # What is the distance of your typical daily commute by motorbike (in miles)?
 motor_dist <- 0:500
 # What is the size of your motorbike?
-motor_size <- c("Does not apply", "Small car", "Medium car", "Large car")
+motor_size <- c("Does not apply", "Small motor", "Medium motor", "Large motor")
 # What is the distance of your typical daily commute by bus (in miles)?
 bus_dist <- 0:500
 # What is the distance of your typical daily commute by train (in miles)?
