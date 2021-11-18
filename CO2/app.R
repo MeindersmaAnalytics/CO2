@@ -139,12 +139,27 @@ ui <- fluidPage(
         tabPanel("Individual calculation",
                  sidebarLayout(
                      sidebarPanel(
-                         selectInput("gender", label = "What is your gender?", choices = gender),
-                         sliderInput("age", label = "What is your age?", min = 0, max = 100, value = 50),
-                         selectInput("food", label = "How would you describe your food consumption?", choices = food),
-                         sliderInput("flight_number", label = "How many round-trip flights do you typically take take in a year?", min = 0, max = 15, value = 5),
-                         sliderInput("flight_distance", label = "What is the typical one-way distance of your flights (in miles)?", min = 0, max = 10000, value = 1000),
-                         selectInput("flight_class", label = "In which class do you generally fly?", choices = flight_class)
+                       selectInput("gender", label = "What is your gender?", choices = gender),
+                       sliderInput("age", label = "What is your age?", min = 0, max = 100, value = 50),
+                       selectInput("food", label = "How would you describe your food consumption?", choices = food),
+                       ####################  FLIGHT
+                       sliderInput("flight_number", label = "How many round-trip flights do you typically take take in a year?", min = 0, max = 15, value = 5),
+                       sliderInput("flight_distance", label = "What is the typical one-way distance of your flights (in miles)?", min = 0, max = 10000, value = 1000),
+                       selectInput("flight_class", label = "In which class do you generally fly?", choices = flight_class),
+                       ####################  CAR
+                       sliderInput("car_dist", label = "What is the distance of your typical daily commute by car (in miles)?", min = 0, max = 500, value = 250),
+                       selectInput("car_size", label = "What is the size of your car?", choices = car_size),
+                       selectInput("car_fuel", label = "What type of fuel does your car take?", choices = car_fuel),
+                       #################### Motorbike
+                       sliderInput("motor_dist", label = "What is the distance of your typical daily commute by motorbike (in miles)?", min = 0, max = 500, value = 250),
+                       selectInput("motor_size", label = "What is the size of your motorbike?", choices = motor_size),
+                       #################### BUS, TRAIN, TAXI
+                       sliderInput("bus_dist", label = "What is the distance of your typical daily commute by bus (in miles)?", min = 0, max = 500, value = 250),
+                       sliderInput("train_dist", label = "What is the distance of your typical daily commute by train (in miles)?", min = 0, max = 500, value = 250),
+                       sliderInput("taxi_dist", label = "What is the distance of your typical daily commute by taxi (in miles)?", min = 0, max = 500, value = 250),
+                       #################### FASHION, GADGETS
+                       selectInput("fashion", label = "How would you describe your fashion sense?", choices = fashion),
+                       selectInput("gadgets", label = "How up-to-date are you with the latest electronic gadgets?", choices = gadgets)
                      ) ,
                      mainPanel(
                          
