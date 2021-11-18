@@ -92,7 +92,7 @@ car_score <- car_dist*working_days*
     car_table$CO2_mile[car_table$Size==car_size & car_table$Type==car_fuel]
 
 # Calculating the emissions from commuting by motorbike
-motor_table <- data.frame(Size = c("Does not apply", "Small car", "Medium car", "Large car"),
+motor_table <- data.frame(Size = c("Does not apply", "Small motor", "Medium motor", "Large motor"),
                           CO2_raw = c(0, 0.13321, 0.1623, 0.21302))
 
 motor_table <- motor_table %>% 
@@ -162,8 +162,8 @@ ui <- fluidPage(
                        selectInput("gadgets", label = "How up-to-date are you with the latest electronic gadgets?", choices = gadgets)
                      ) ,
                      mainPanel(
+                         tableOutput("calculations")
                          
-                         textOutput("calculations")
                          # outputs
                          
                      )    
@@ -213,7 +213,7 @@ server <- function(input, output) {
     
     # Calculating the total CO2 emissions from commuting by taxi
     taxi_score <- reactive(
-        taxi_dist*working_days*0.14549/1000/1.609344
+        input$taxi_dist*working_days*0.14549/1000/1.609344
     )
     
     # Calculating the total CO2 emissions from fashion
@@ -226,23 +226,22 @@ server <- function(input, output) {
         0.03*5.4*ifelse(input$gadgets=="Low", 0.5, ifelse(input$gadgets=="Medium", 1, 1.5))
     )
     
+    # Calculating the sum of emissions
+    total_emissions <- reactive({
+      food_score() + flight_score() + car_score() + motor_score() + 
+        bus_score() + train_score() + taxi_score() + fashion_score() + gadget_score()
+    })
+
+    
     output$calculations <- renderTable({
-        
-        # Calculating the sum of emissions
-        total_emissions <- food_score() + flight_score() + car_score() + motor_score() + 
-            bus_score() + train_score() + taxi_score() + fashion_score() + gadget_score()
-        
-        emission_table <- data.frame(`Category` = c("Food", "Air Travel", "Car", 
+      emission_table <- data.frame(`Category` = c("Food", "Air Travel", "Car", 
                                                     "Motor", "Bus", "Train", "Taxi",
                                                     "Fashion", "Gadgets", "Total"),
                                      `Estimated CO2 Emissions` = c(food_score(), flight_score(),
                                                                    car_score(), motor_score(),
                                                                    bus_score(), train_score(),
                                                                    taxi_score(), fashion_score(),
-                                                                   gadget_score(), total_emissions))
-        
-        emission_table
-        
+                                                                   gadget_score(), total_emissions()))
     })
     
 }
