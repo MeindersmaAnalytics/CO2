@@ -1,0 +1,144 @@
+library(shiny)
+library(tidyverse)
+
+### QUESTIONS FOR THE INDIVIDUAL CALCULATOR
+
+# What is your gender?
+gender <- c("Male", "Female")
+# What is your age?
+age <- 0:100
+# How would you describe your food consumption?
+food <- c("High meat consumption",
+          "Normal meat consumption",
+          "Low meat consumption",
+          "Fish-eater",
+          "Vegetarian",
+          "Vegan")
+# How many round-trip flights do you typically take take in a year?
+flight_number <- 0:15
+# What is the typical one-way distance of your flights (in miles)?
+flight_distance <- 0:10000
+# In which class do you generally fly?
+flight_class <- c("Does not apply", "Economy class", "Business class")
+# What is the distance of your typical daily commute by car (in miles)?
+car_dist <- 0:500
+# What is the size of your car?
+car_size <- c("Does not apply", "Small car", "Medium car", "Large car")
+# What type of fuel does your car take?
+car_fuel <- c("Does not apply", "Diesel", "Petrol", "Hybrid", "LPG", 
+              "Plug-in Hybrid Electric", "Battery Electric")
+# What is the distance of your typical daily commute by motorbike (in miles)?
+motor_dist <- 0:500
+# What is the size of your motorbike?
+motor_size <- c("Does not apply", "Small car", "Medium car", "Large car")
+# What is the distance of your typical daily commute by bus (in miles)?
+bus_dist <- 0:500
+# What is the distance of your typical daily commute by train (in miles)?
+train_dist <- 0:500
+# What is the distance of your typical daily commute by taxi (in miles)?
+taxi_dist <- 0:500
+
+# ENERGY QUESTIONS
+
+# How would you describe your fashion sense?
+fashion <- c("Low", "Medium", "High")
+# How up-to-date are you with the latest electronic gadgets?
+gadgets <- c("Low", "Medium", "High")
+
+
+### TABLES FOR THE INDIVIDUAL CALCULATOR
+
+# Mean greenhouse gas emissions per 2,000 kcal by diet type and sex
+# Mean dietary GHG emissions (kgCO2e)
+food_score <- data.frame(gender = c(rep("Male", 6), rep("Female", 6)),
+                         # Recommended daily calorie intake by gender (in kcal)
+                         consumption = c(rep(2500, 6), rep(2000, 6)),
+                         type = rep(c("High meat consumption",
+                                      "Normal meat consumption",
+                                      "Low meat consumption",
+                                      "Fish-eater",
+                                      "Vegetarian",
+                                      "Vegan"), 2),
+                         CO2_raw = c(7.26, 5.66, 4.67, 3.94, 3.85, 2.94,
+                                     7.17, 5.62, 4.67, 3.90, 3.80, 2.87))
+
+# Correcting for the higher consumption of males
+# Multiplying by 365 and dividing by 1000 for the final CO2 emissions from food
+food_score <- food_score %>% 
+    mutate(CO2 = (CO2_raw * consumption/2000)*365/1000)
+
+# Calculating the emissions from flights
+flight_score <- flight_number*2*(flight_distance/1.609344)*
+    ifelse(flight_class=="Business class", 0.4, 0.15)/1000
+
+# Calculating the emissions from commuting by car
+car_table <- crossing(c("Does not apply", "Small car", "Medium car", "Large car"), 
+                      c("Does not apply", "Diesel", "Petrol", "Hybrid", "LPG", 
+                        "Plug-in Hybrid Electric", "Battery Electric"))
+colnames(car_table) <- c("Size", "Type")
+car_table <- car_table %>% 
+    mutate(CO2_raw = c(0, 0, 0, 0, 0, 0, 0,
+                       0.07462, 0.32863, 0, 0.23304, 0.42817, 0.44752, 0.12183,
+                       0.08954, 0.26775, 0, 0.17216, 0.28721, 0.30029, 0.11283,
+                       0.10698, 0.22082, 0, 0.16538, 0.20000, 0.23877, 0.03597),
+           CO2_mile = CO2_raw/1000/1.609344)
+
+# There are 256 working days in the UK
+# Look up the CO2 emissions per mile of the selected car type
+# Multiply this by the number of miles and the car distance
+working_days <- 256
+car_score <- car_dist*working_days*
+    car_table$CO2_mile[car_table$Size==car_size & car_table$Type==car_type]
+
+# Calculating the emissions from commuting by motorbike
+motor_table <- data.frame(Size = c("Does not apply", "Small car", "Medium car", "Large car"),
+                          CO2_raw = c(0, 0.13321, 0.1623, 0.21302))
+
+motor_table <- motor_table %>% 
+    mutate(CO2_mile = CO2_raw/1000/1.609344)
+
+motor_score <- motor_dist*working_days* 
+    motor_table$CO2_mile[motor_table$Size==motor_size]
+
+# Calculating the emissions from commuting by bus
+bus_score <- bus_dist*working_days*0.10312/1000/1.609344
+
+# Calculating the emissions from commuting by train
+train_score <- train_dist*working_days*0.03694/1000/1.609344
+
+# Calculating the emissions from commuting by taxi
+taxi_score <- taxi_dist*working_days*0.14549/1000/1.609344
+
+# INSERT ENERGY
+
+# Calculating the emissions from fashion
+# Estimated to be 3% on average of total CO2 emissions 
+# (5.4 tonnes per capita in UK, World Bank)
+fashion_score <- 0.03*5.4*ifelse(fashion=="Low", 0.5,
+                                 ifelse(fashion=="Medium", 1, 1.5))
+
+# Calculating the emissions from electronic gadgets
+# Estimated to be 3% on average of total CO2 emissions
+# (5.4 tonnes per capita in UK, World Bank)
+gadget_score <- 0.03*5.4*ifelse(gadget=="Low", 0.5,
+                                ifelse(gadget=="Medium", 1, 1.5))
+
+
+
+### PARAMETERS FOR THE HOUSEHOLD CALCULATOR
+# NOT YET AVAILABLE
+
+
+
+### SHINY APP: USER INTERFACE
+ui <- fluidPage(
+    
+)
+
+### SHINY APP: SERVER
+server <- function(input, output) {
+    
+}
+
+### RUN THE APPLICATION
+shinyApp(ui = ui, server = server)
