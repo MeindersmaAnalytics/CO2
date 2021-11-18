@@ -226,25 +226,22 @@ server <- function(input, output) {
         0.03*5.4*ifelse(input$gadgets=="Low", 0.5, ifelse(input$gadgets=="Medium", 1, 1.5))
     )
     
-    output$calculations <- renderText({
+    output$calculations <- renderTable({
         
         # Calculating the sum of emissions
-        #total_emissions <- food_score() + flight_score() + car_score() + motor_score() + 
-        #    bus_score() + train_score() + taxi_score() + fashion_score() + gadget_score()
+        total_emissions <- food_score() + flight_score() + car_score() + motor_score() + 
+            bus_score() + train_score() + taxi_score() + fashion_score() + gadget_score()
         
-        # Printing the estimated CO2 emissions by category
-        glue("Estimated total CO2 emissions from food: ", as.character(food_score()), ".")
-        glue("Estimated total CO2 emissions from air travel: ", as.character(flight_score()), ".")
-        #glue("Estimated total CO2 emissions from commuting by car: ", as.character(car_score()), ".")
-        #glue("Estimated total CO2 emissions from commuting by motor: ", as.character(motor_score()), ".")
-        #glue("Estimated total CO2 emissions from commuting by bus: ", as.character(bus_score()), ".")
-        #glue("Estimated total CO2 emissions from commuting by train: ", as.character(train_score()), ".")
-        #glue("Estimated total CO2 emissions from commuting by taxi: ", as.character(taxi_score()), ".")
-        #glue("Estimated total CO2 emissions from fashion: ", as.character(fashion_score()), ".")
-        #glue("Estimated total CO2 emissions from electronic gadgets: ", as.character(gadget_score()), ".")
+        emission_table <- data.frame(`Category` = c("Food", "Air Travel", "Car", 
+                                                    "Motor", "Bus", "Train", "Taxi",
+                                                    "Fashion", "Gadgets", "Total"),
+                                     `Estimated CO2 Emissions` = c(food_score(), flight_score(),
+                                                                   car_score(), motor_score(),
+                                                                   bus_score(), train_score(),
+                                                                   taxi_score(), fashion_score(),
+                                                                   gadget_score(), total_emissions))
         
-        # Printing the total estimated CO2 emissions
-        #glue("The estimated total CO2 emissions are: ", as.character(total_emissions, "."))
+        emission_table
         
     })
     
