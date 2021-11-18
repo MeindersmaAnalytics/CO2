@@ -1,5 +1,6 @@
 library(shiny)
 library(tidyverse)
+library(glue)
 
 ### QUESTIONS FOR THE INDIVIDUAL CALCULATOR
 
@@ -88,7 +89,7 @@ car_table <- car_table %>%
 # Multiply this by the number of miles and the car distance
 working_days <- 256
 car_score <- car_dist*working_days*
-    car_table$CO2_mile[car_table$Size==car_size & car_table$Type==car_type]
+    car_table$CO2_mile[car_table$Size==car_size & car_table$Type==car_fuel]
 
 # Calculating the emissions from commuting by motorbike
 motor_table <- data.frame(Size = c("Does not apply", "Small car", "Medium car", "Large car"),
@@ -147,6 +148,7 @@ ui <- fluidPage(
                      ) ,
                      mainPanel(
                          
+                         textOutput("calculations")
                          # outputs
                          
                      )    
@@ -163,7 +165,7 @@ server <- function(input, output) {
     food_score <- reactive(
         food_table$CO2[food_table$gender==input$gender & 
                            food_table$type==input$food]
-    )
+  )
     
     # Calculating the total CO2 emissions from air travel
     flight_score <- reactive(
@@ -175,7 +177,7 @@ server <- function(input, output) {
     car_score <- reactive(
         input$car_dist*working_days*
             car_table$CO2_mile[car_table$Size==input$car_size & 
-                                   car_table$Type==input$car_type]
+                                   car_table$Type==input$car_fuel]
     )
     
     # Calculating the total CO2 emissions from commuting by motor
@@ -209,27 +211,27 @@ server <- function(input, output) {
         0.03*5.4*ifelse(input$gadgets=="Low", 0.5, ifelse(input$gadgets=="Medium", 1, 1.5))
     )
     
-    output$calculations <- renderText{
+    output$calculations <- renderText({
         
         # Calculating the sum of emissions
-        total_emissions <- food_score + flight_score + car_score + motor_score + 
-            bus_score + train_score + taxi_score + fashion_score + gadget_score
+        #total_emissions <- food_score() + flight_score() + car_score() + motor_score() + 
+        #    bus_score() + train_score() + taxi_score() + fashion_score() + gadget_score()
         
         # Printing the estimated CO2 emissions by category
-        glue("Estimated total CO2 emissions from food: ", as.character(food_score), ".")
-        glue("Estimated total CO2 emissions from air travel: ", as.character(flight_score), ".")
-        glue("Estimated total CO2 emissions from commuting by car: ", as.character(car_score), ".")
-        glue("Estimated total CO2 emissions from commuting by motor: ", as.character(motor_score), ".")
-        glue("Estimated total CO2 emissions from commuting by bus: ", as.character(bus_score), ".")
-        glue("Estimated total CO2 emissions from commuting by train: ", as.character(train_score), ".")
-        glue("Estimated total CO2 emissions from commuting by taxi: ", as.character(taxi_score), ".")
-        glue("Estimated total CO2 emissions from fashion: ", as.character(fashion_score), ".")
-        glue("Estimated total CO2 emissions from electronic gadgets: ", as.character(gadget_score), ".")
+        glue("Estimated total CO2 emissions from food: ", as.character(food_score()), ".")
+        glue("Estimated total CO2 emissions from air travel: ", as.character(flight_score()), ".")
+        #glue("Estimated total CO2 emissions from commuting by car: ", as.character(car_score()), ".")
+        #glue("Estimated total CO2 emissions from commuting by motor: ", as.character(motor_score()), ".")
+        #glue("Estimated total CO2 emissions from commuting by bus: ", as.character(bus_score()), ".")
+        #glue("Estimated total CO2 emissions from commuting by train: ", as.character(train_score()), ".")
+        #glue("Estimated total CO2 emissions from commuting by taxi: ", as.character(taxi_score()), ".")
+        #glue("Estimated total CO2 emissions from fashion: ", as.character(fashion_score()), ".")
+        #glue("Estimated total CO2 emissions from electronic gadgets: ", as.character(gadget_score()), ".")
         
         # Printing the total estimated CO2 emissions
-        glue("The estimated total CO2 emissions are: ", as.character(total_emissions), ".")
+        #glue("The estimated total CO2 emissions are: ", as.character(total_emissions, "."))
         
-    }
+    })
     
 }
 
