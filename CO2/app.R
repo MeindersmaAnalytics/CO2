@@ -132,7 +132,28 @@ gadget_score <- 0.03*5.4*ifelse(gadget=="Low", 0.5,
 
 ### SHINY APP: USER INTERFACE
 ui <- fluidPage(
-    
+    titlePanel(" CO2 Emission Calculator"),
+    tabsetPanel(
+        tabPanel("Readme"), 
+        tabPanel("Individual calculation",
+                 sidebarLayout(
+                     sidebarPanel(
+                         selectInput("gender", label = "What is your gender?", choices = gender),
+                         sliderInput("age", label = "What is your age?", min = 0, max = 100, value = 50),
+                         selectInput("food", label = "How would you describe your food consumption?", choices = food),
+                         sliderInput("flight_number", label = "How many round-trip flights do you typically take take in a year?", min = 0, max = 15, value = 5),
+                         sliderInput("flight_distance", label = "What is the typical one-way distance of your flights (in miles)?", min = 0, max = 10000, value = 1000),
+                         selectInput("flight_class", label = "In which class do you generally fly?", choices = flight_class),
+                     ) ,
+                     mainPanel(
+                         
+                         # outputs
+                         
+                     )    
+                 )
+        ),       
+        tabPanel("Household calculation")
+    )
 )
 
 ### SHINY APP: SERVER
